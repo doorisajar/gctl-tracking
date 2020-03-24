@@ -1,5 +1,9 @@
 library(shiny)
 
+# Store modules in /R so that future versions will autoload them
+source("R/data.R")
+
+
 # Define UI
 ui <- fluidPage(
 
@@ -9,12 +13,12 @@ ui <- fluidPage(
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            
+            actionButton("update", "Update", class = "btn-primary")
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
-           tableOutput("leagueTable")
+           tableOutput("league_table")
         )
     )
 )
@@ -22,12 +26,11 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-
-    output$leagueTable <- renderTable({
-        
-        loadData()
-        
-    })
+    
+    league_data <- eventReactive({input$action | input$update}, loadData())
+    
+    output$league_table <- renderTable(league_data())
+    
 }
 
 
