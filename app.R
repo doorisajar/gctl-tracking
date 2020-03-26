@@ -24,7 +24,7 @@ ui <- fluidPage(
 )
 
 
-# Define server logic required to draw a histogram
+# Define server
 server <- function(input, output) {
     
     league_data <- eventReactive({input$action | input$update}, loadData())
