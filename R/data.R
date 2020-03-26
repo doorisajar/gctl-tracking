@@ -5,6 +5,9 @@ library(dplyr)
 library(janitor)
 
 
+# We're only accessing public sheets
+sheets_deauth()
+
 table <- "league_table"
 
 
@@ -31,7 +34,7 @@ loadData <- function() {
   
    points <-
      lg %>% 
-     leagueStats() %>%
+     league_stats() %>%
      ungroup() %>%
      group_by(id) %>%
      summarize(points = sum(points, na.rm = TRUE) %>% as.integer) %>%
@@ -44,18 +47,18 @@ loadData <- function() {
 }
 
 
-leagueStats <- function(data) {
+league_stats <- function(data) {
   
   data %<>%
     group_by(report_week, id) %>%
-    mutate(points = leaguePoints(pairing_wins, new_ids, open_play_games, open_play_wins))
+    mutate(points = league_points(pairing_wins, new_ids, open_play_games, open_play_wins))
   
   data
   
 }
 
 
-leaguePoints <- function(pairing_wins, new_ids, open_play_games, open_play_wins) {
+league_points <- function(pairing_wins, new_ids, open_play_games, open_play_wins) {
   
   pairing_wins <- sum(pairing_wins, na.rm = TRUE)
   new_ids <- sum(new_ids, na.rm = TRUE)
