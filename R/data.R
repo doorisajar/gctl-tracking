@@ -9,7 +9,8 @@ library(janitor)
 sheets_deauth()
 
 table <- "league_table"
-
+league_start <- ymd_hms("2020-03-19 00:00:00")
+reset_wday <- 5 # Thursdays
 
 loadData <- function() {
 
@@ -30,13 +31,13 @@ loadData <- function() {
   lg %<>%
     mutate(pairing_wins = substr(pairing_wins, 1, 1) %>% as.integer,
            new_ids = substr(new_ids, 1, 1) %>% as.integer,
-           report_week = week(report_date))
+           report_week = league_week(report_date, league_start))
   
    points <-
      lg %>% 
      league_stats() %>%
      ungroup() %>%
-     group_by(id) %>%
+     group_by(report_week, id) %>%
      summarize(points = sum(points, na.rm = TRUE) %>% as.integer) %>%
      arrange(desc(points))
         
@@ -47,10 +48,21 @@ loadData <- function() {
 }
 
 
+league_week <- function(report_date, league_start) {
+
+  week <- 
+    ((lg$report_date - league_start) / dweeks(1)) %>% 
+    floor()
+  
+  week + 1
+  
+}
+
+
 league_stats <- function(data) {
   
   data %<>%
-    group_by(report_week, id) %>%
+    rowwise() %>%
     mutate(points = league_points(pairing_wins, new_ids, open_play_games, open_play_wins))
   
   data
