@@ -10,8 +10,9 @@ sheets_deauth()
 
 table <- "league_table"
 league_start <- ymd_hms("2020-03-19 00:00:00")
-reset_wday <- 5 # Thursdays
 
+
+# Get the reporting table
 loadData <- function() {
 
   sheet <- "https://docs.google.com/spreadsheets/d/1M5JmA4usZJ-5zk3hKrm8i90uSrGYEfpOd0w3EGKhk-g"
@@ -39,7 +40,9 @@ loadData <- function() {
      ungroup() %>%
      group_by(report_week, id) %>%
      summarize(points = sum(points, na.rm = TRUE) %>% as.integer) %>%
-     arrange(desc(points))
+     arrange(desc(points)) %>%
+     ungroup() %>%
+     select(id, points)
         
    names(points) <- c("Player", "League Points")
    
