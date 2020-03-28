@@ -3,6 +3,7 @@ library(lubridate)
 library(magrittr)
 library(dplyr)
 library(janitor)
+library(jsonlite)
 
 
 # We're only accessing public sheets
@@ -38,7 +39,7 @@ loadData <- function() {
      lg %>% 
      league_stats() %>%
      ungroup() %>%
-     group_by(report_week, id) %>%
+     group_by(id) %>%
      summarize(points = sum(points, na.rm = TRUE) %>% as.integer) %>%
      arrange(desc(points)) %>%
      ungroup() %>%
