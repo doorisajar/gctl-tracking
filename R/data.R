@@ -35,19 +35,26 @@ load_league_data <- function() {
            new_ids = substr(new_ids, 1, 1) %>% as.integer,
            report_week = league_week(report_date, league_start))
   
-   points <-
-     lg %>% 
-     league_stats() %>%
-     ungroup() %>%
-     group_by(id) %>%
-     summarize(points = sum(points, na.rm = TRUE) %>% as.integer) %>%
-     arrange(desc(points)) %>%
-     ungroup() %>%
-     select(id, points)
-        
-   names(points) <- c("Player", "League Points")
-   
-   points
+  lg
+  
+}
+
+
+league_standings <- function(data) {
+  
+  points <-
+    lg %>% 
+    league_stats() %>%
+    ungroup() %>%
+    group_by(id) %>%
+    summarize(points = sum(points, na.rm = TRUE) %>% as.integer) %>%
+    arrange(desc(points)) %>%
+    ungroup() %>%
+    select(id, points)
+  
+  names(points) <- c("Player", "League Points")
+  
+  points
   
 }
 

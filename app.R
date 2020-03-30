@@ -6,6 +6,7 @@ library(purrr)
 source("R/data.R")
 source("R/cobra.R")
 source("R/league_links.R")
+source("R/plots.R")
 
 
 # Define UI
@@ -68,8 +69,10 @@ server <- function(input, output) {
     
     league_data <- eventReactive({input$action | input$update}, load_league_data())
     
-    output$league_table <- renderTable(league_data())
+    # Cumulative league standings
+    output$league_table <- renderTable(league_standings(league_data))
     
+    # Pairings for a user-selected week (default latest week)
     output$pairings <- renderTable(league_pairings(input$selected_pairings))
     
 }
