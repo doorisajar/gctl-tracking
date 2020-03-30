@@ -14,8 +14,10 @@ daily_plot <- function(data) {
     # TODO better theme
     p <-
         ggplot(data, aes(x = report_date, y = cumulative_points, colour = id)) +
-        geom_line() +
+        geom_line(size = 1) +
+        scale_colour_brewer(type = "seq", palette = "Spectral") +
         dark_theme_dark() +
+        theme(legend.title = element_blank()) +
         xlab(element_blank()) +
         ylab("Cumulative League Points")
 
