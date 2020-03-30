@@ -70,25 +70,7 @@ server <- function(input, output) {
     
     output$league_table <- renderTable(league_data())
     
-    # TODO put this in a different column or something once it's working, or maybe have tabs to
-    # choose from displaying standings, pairings, or plots
-    output$pairings <- renderTable({
-        
-        get_player_name <- function(p) {
-            
-            filter(cobra_stats$players, id == p) %>% 
-            select(id, name)
-            
-        }
-
-        p1 <- map_dfr(cobra_stats$rounds[[input$selected_pairings]]$player1$id, get_player_name)
-        
-        p2 <- map_dfr(cobra_stats$rounds[[input$selected_pairings]]$player2$id, get_player_name)
- 
-        data.frame(Player1 = p1$name,
-                   Player2 = p2$name)
-                
-    })
+    output$pairings <- renderTable(league_pairings(input$selected_pairings))
     
 }
 
