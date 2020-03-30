@@ -4,6 +4,7 @@ library(shinythemes)
 # These are used in multiple source files
 library(dplyr)
 library(purrr)
+library(plotly)
 
 # Store modules in /R so that future versions will autoload them
 source("R/data.R")
@@ -54,7 +55,7 @@ ui <- fluidPage(theme = shinytheme("darkly"),
 
                 tabPanel("Pairings", tableOutput("pairings")),
 
-                tabPanel("Timeseries", plotOutput("cumulative_plot"))
+                tabPanel("Timeseries", plotlyOutput("cumulative_plot"))
 
             )
 
@@ -75,7 +76,7 @@ server <- function(input, output) {
     output$pairings <- renderTable(league_pairings(input$selected_pairings))
 
     # Timeseries plot of cumulative points for each player
-    output$cumulative_plot <- renderPlot(daily_plot(league_stats(league_data)))
+    output$cumulative_plot <- renderPlotly(daily_plot(league_stats(league_data)))
 
 }
 

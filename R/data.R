@@ -12,8 +12,7 @@ sheets_deauth()
 # Globals
 table <- "league_table"
 league_start <- ymd_hms("2020-03-20 00:00:00")
-sheet <-
-    "https://docs.google.com/spreadsheets/d/1M5JmA4usZJ-5zk3hKrm8i90uSrGYEfpOd0w3EGKhk-g"
+sheet <- "https://docs.google.com/spreadsheets/d/1M5JmA4usZJ-5zk3hKrm8i90uSrGYEfpOd0w3EGKhk-g"
 
 
 # Get the reporting table

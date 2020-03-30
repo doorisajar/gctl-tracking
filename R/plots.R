@@ -11,17 +11,17 @@ daily_plot <- function(data) {
         group_by(id, report_date) %>%
         summarize(cumulative_points = max(cumulative_points, na.rm = TRUE))
 
-    # TODO better theme
-    p <-
+    # TODO make the legend bigger
+    static_plot <-
         ggplot(data, aes(x = report_date, y = cumulative_points, colour = id)) +
         geom_line(size = 1) +
         scale_colour_brewer(type = "seq", palette = "Spectral") +
         dark_theme_dark() +
         theme(legend.title = element_blank()) +
-        xlab(element_blank()) +
+        xlab("") +
         ylab("Cumulative League Points")
 
     # TODO this fails to render in the app when made interactive with plotly
-    p
+    ggplotly(static_plot)
 
 }
