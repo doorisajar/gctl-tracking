@@ -66,7 +66,7 @@ ui <- fluidPage(
 # Define server
 server <- function(input, output) {
     
-    league_data <- eventReactive({input$action | input$update}, loadData())
+    league_data <- eventReactive({input$action | input$update}, load_league_data())
     
     output$league_table <- renderTable(league_data())
     

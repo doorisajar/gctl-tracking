@@ -16,7 +16,7 @@ sheet <- "https://docs.google.com/spreadsheets/d/1M5JmA4usZJ-5zk3hKrm8i90uSrGYEf
 
 
 # Get the reporting table
-loadData <- function() {
+load_league_data <- function() {
   
   # Read the data
   lg <- read_sheet(sheet)
