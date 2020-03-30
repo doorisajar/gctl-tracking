@@ -48,7 +48,7 @@ load_league_data <- function() {
 league_standings <- function(data) {
 
     points <-
-        lg %>%
+        data %>%
         league_stats() %>%
         ungroup() %>%
         group_by(id) %>%
@@ -79,7 +79,8 @@ league_stats <- function(data) {
 
     data %<>%
         rowwise() %>%
-        mutate(points = league_points(pairing_wins, new_ids, open_play_games, open_play_wins))
+        mutate(points = league_points(pairing_wins, new_ids, open_play_games, open_play_wins)) %>%
+        ungroup()
 
     data
 
