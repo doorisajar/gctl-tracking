@@ -1,10 +1,4 @@
 library(googlesheets4)
-library(lubridate)
-library(magrittr)
-library(dplyr)
-library(janitor)
-library(jsonlite)
-
 
 # We're only accessing public sheets
 sheets_deauth()

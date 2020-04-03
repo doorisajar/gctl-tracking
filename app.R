@@ -1,10 +1,12 @@
 library(shiny)
 library(shinythemes)
 
-# These are used in multiple source files
+# General utility packages
 library(dplyr)
 library(purrr)
-library(plotly)
+library(lubridate)
+library(magrittr)
+library(janitor)
 
 # Store modules in /R so that future versions will autoload them
 source("R/data.R")

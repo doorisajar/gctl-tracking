@@ -1,5 +1,6 @@
 library(ggplot2)
 library(ggdark)
+library(plotly)
 
 # This function expects to receive the output of league_stats
 daily_plot <- function(data) {
