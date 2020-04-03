@@ -17,11 +17,21 @@ get_player_name <- function(p, stats = cobra_stats) {
 
 league_pairings <- function(selected_pairings, stats = cobra_stats) {
 
-        p1 <- map_dfr(stats$rounds[[selected_pairings]]$player1$id, get_player_name)
+    p1 <- map_dfr(stats$rounds[[selected_pairings]]$player1$id, get_player_name)
 
-        p2 <- map_dfr(stats$rounds[[selected_pairings]]$player2$id, get_player_name)
+    p2 <- map_dfr(stats$rounds[[selected_pairings]]$player2$id, get_player_name)
 
-        data.frame(Player1 = p1$name,
-                   Player2 = p2$name)
+    # handle the case where someone has a bye
+    if (nrow(p1) != nrow(p2)) {
+
+        row_limit <- min(nrow(p1), nrow(p2))
+
+        p1 <- p1[1:row_limit, ]
+        p2 <- p2[1:row_limit, ]
 
     }
+
+    data.frame(Player1 = p1$name,
+               Player2 = p2$name)
+
+}
