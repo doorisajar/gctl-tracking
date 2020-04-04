@@ -11,7 +11,6 @@ library(janitor)
 # Store modules in /R so that future versions will autoload them
 source("R/data.R")
 source("R/cobra.R")
-source("R/league_links.R")
 source("R/plots.R")
 
 
@@ -23,21 +22,22 @@ ui <- fluidPage(theme = shinytheme("darkly"),
 
     # Sidebar with a slider input for number of bins
     sidebarLayout(
+
         sidebarPanel(width = 3,
 
             strong("League Links"),
 
             br(),
 
-            a("League Rules", href = league_rules),
+            a("League Rules", href = params$league_rules),
 
             br(),
 
-            a("League Signup", href = league_signup),
+            a("League Signup", href = params$league_signup),
 
             br(),
 
-            a("League Reporting", href = league_reporting),
+            a("League Reporting", href = params$league_reporting),
 
             conditionalPanel(condition = "input.selected_tab == 'Pairings'",
                              br(),
@@ -62,7 +62,9 @@ ui <- fluidPage(theme = shinytheme("darkly"),
             )
 
         )
+
     )
+
 )
 
 

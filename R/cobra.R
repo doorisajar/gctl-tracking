@@ -1,9 +1,7 @@
 library(jsonlite)
 
 # Globals
-cobra_link <- "http://cobr.ai/tournaments/1628.json"
-
-cobra_stats <- fromJSON(cobra_link)
+cobra_stats <- fromJSON(params$cobra_link)
 names(cobra_stats$rounds) <- paste("Week", 1:length(cobra_stats$rounds))
 
 
