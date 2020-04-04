@@ -9,6 +9,7 @@ library(magrittr)
 library(janitor)
 
 # Store modules in /R so that future versions will autoload them
+source("R/params.R")
 source("R/data.R")
 source("R/cobra.R")
 source("R/plots.R")
