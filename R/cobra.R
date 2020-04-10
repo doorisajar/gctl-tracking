@@ -9,11 +9,9 @@ get_player_name <- function(p, stats = cobra_stats) {
 
     name <-
         filter(stats$players, id == p) %>%
-        select(name) %>%
-        as.character()
+        pull(name)
 
-    # TODO coercing empty to character to NA to exploit that later is kind of hacky
-    ifelse(name == "character(0)", NA, name)
+    ifelse(is.na(p), NA, name)
 
 }
 
