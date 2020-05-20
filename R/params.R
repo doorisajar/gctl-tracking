@@ -1,3 +1,3 @@
-library(yaml)
+library(jsonlite)
 
-params <- yaml.load_file("config.yml")
+params <- read_json("gctl_config.json")
