@@ -48,9 +48,16 @@ league_standings <- function(data, params) {
 
 league_week <- function(report_date, league_start) {
 
-    week <-
-        ((report_date - league_start) / dweeks(1)) %>%
-        floor()
+    if (is_empty(report_date)) {
+
+        week <- 0
+
+    } else{
+
+        week <-
+            ((report_date - league_start) / dweeks(1)) %>%
+            floor()
+    }
 
     week + 1
 
