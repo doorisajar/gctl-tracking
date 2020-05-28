@@ -96,6 +96,8 @@ bounty_targets <- function(data, week, params) {
 
     if (!is.null(params$bounty_threshold) & is.numeric(params$bounty_threshold))
         standings <- standings[1:params$bounty_threshold, ]
+    else
+        standings <- standings[0, ]
 
     # return however many player names are above the bounty threshold as a table for display
     standings %>%
