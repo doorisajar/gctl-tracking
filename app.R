@@ -73,10 +73,12 @@ ui <- fluidPage(theme = shinytheme("darkly"),
 # Define server
 server <- function(input, output) {
 
-    league_data <- load_league_data()
+    params <- read_params()
+
+    league_data <- load_league_data(params)
 
     # Cumulative league standings
-    output$league_table <- renderTable(league_standings(league_data))
+    output$league_table <- renderTable(league_standings(league_data, params))
 
     # Pairings for a user-selected week (default latest week)
     output$pairings <- renderTable(league_pairings(input$selected_pairings))
@@ -84,7 +86,7 @@ server <- function(input, output) {
     output$bounty_targets <- renderTable(bounty_targets(league_data, input$selected_pairings, params))
 
     # Timeseries plot of cumulative points for each player
-    output$cumulative_plot <- renderPlotly(daily_plot(league_stats(league_data)))
+    output$cumulative_plot <- renderPlotly(daily_plot(league_stats(league_data, params)))
 
 }
 
