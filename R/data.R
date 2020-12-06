@@ -1,7 +1,7 @@
 library(googlesheets4)
 
 # We're only accessing public sheets
-sheets_deauth()
+gs4_deauth()
 
 # Globals
 table <- "league_table"
