@@ -8,8 +8,11 @@ library(lubridate)
 library(magrittr)
 library(janitor)
 
-# Store modules in /R so that future versions will autoload them
+params_path <- "gctl_config.json"
+
+# Load manually instead of autoloading so we get the right order
 source("R/params.R")
+source("R/league.R")
 source("R/data.R")
 source("R/cobra.R")
 source("R/plots.R")
@@ -73,20 +76,29 @@ ui <- fluidPage(theme = shinytheme("darkly"),
 # Define server
 server <- function(input, output) {
 
-    params <- read_params()
+    params <- read_params(params_path)
 
     league_data <- load_league_data(params)
 
-    # Cumulative league standings
-    output$league_table <- renderTable(league_standings(league_data, params))
+    if (nrow(league_data) == 0) {
 
-    # Pairings for a user-selected week (default latest week)
-    output$pairings <- renderTable(league_pairings(input$selected_pairings))
+        # Cumulative league standings
+        output$league_table <- renderTable(league_standings(league_data, params))
 
-    output$bounty_targets <- renderTable(bounty_targets(league_data, input$selected_pairings, params))
+    } else {
 
-    # Timeseries plot of cumulative points for each player
-    output$cumulative_plot <- renderPlotly(daily_plot(league_stats(league_data, params)))
+        # Cumulative league standings
+        output$league_table <- renderTable(league_standings(league_data, params))
+
+        # Pairings for a user-selected week (default latest week)
+        output$pairings <- renderTable(league_pairings(input$selected_pairings))
+
+        output$bounty_targets <- renderTable(bounty_targets(league_data, input$selected_pairings, params))
+
+        # Timeseries plot of cumulative points for each player
+        output$cumulative_plot <- renderPlotly(daily_plot(league_stats(league_data, params)))
+
+    }
 
 }
 

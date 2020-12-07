@@ -1,7 +1,7 @@
 library(jsonlite)
 
-read_params <- function() {
+read_params <- function(path) {
 
-    read_json("gctl_config.json")
+    read_json(path)
 
 }

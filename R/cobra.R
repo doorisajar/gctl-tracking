@@ -1,9 +1,8 @@
 library(jsonlite)
 
 # Globals
-params <- read_params()
-cobra_stats <- fromJSON(params$cobra_link)
-names(cobra_stats$rounds) <- paste("Week", 1:length(cobra_stats$rounds))
+params <- read_params("gctl_config.json")
+cobra_stats <- get_cobra_stats(params$cobra_link)
 
 
 get_player_name <- function(p, stats = cobra_stats) {
