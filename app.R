@@ -85,6 +85,9 @@ server <- function(input, output) {
         # Cumulative league standings
         output$league_table <- renderTable(league_standings(league_data, params))
 
+        # Pairings for a user-selected week (default latest week)
+        output$pairings <- renderTable(league_pairings(input$selected_pairings))
+
     } else {
 
         # Cumulative league standings
