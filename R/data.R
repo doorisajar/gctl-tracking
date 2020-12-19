@@ -36,6 +36,9 @@ load_league_data <- function(params) {
     # Read the data
     lg <- read_sheet(params$league_stats)
 
+    # Remove rows that are entirely NA
+    lg <- lg[rowSums(is.na(lg)) != ncol(lg), ]
+
     names(lg) <- params$report_cols
 
     lg %<>%
