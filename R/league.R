@@ -39,6 +39,7 @@ league_stats <- function(data, params) {
 
     point_cols <- keep(params$report_cols, ~ .x %in% names(params$report_points))
 
+    # this applies `...1` style column names, but it doesn't really matter
     points <- map2_dfc(point_cols, params$report_points, league_points, data = data)
 
     data$points <- rowSums(points, na.rm = TRUE)
@@ -65,12 +66,10 @@ league_points <- function(col, values, data) {
 
 bounty_targets <- function(data, week, params) {
 
-    # TODO return a table that can be displayed on the pairings tab adjacent to the pairings.
+    data %<>%
+        filter(report_week < week)
 
     standings <- league_standings(data, params)
-
-    standings %<>%
-        filter(league_week < week)
 
     if (!is.null(params$bounty_threshold) & is.numeric(params$bounty_threshold))
         standings <- standings[1:params$bounty_threshold, ]
@@ -79,6 +78,6 @@ bounty_targets <- function(data, week, params) {
 
     # return however many player names are above the bounty threshold as a table for display
     standings %>%
-        select(Player)
+        select(`Bounty Targets` = Player)
 
 }
