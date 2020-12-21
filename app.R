@@ -99,7 +99,7 @@ server <- function(input, output) {
         output$bounty_targets <- renderTable(bounty_targets(league_data, input$selected_pairings, params))
 
         # Timeseries plot of cumulative points for each player
-        output$cumulative_plot <- renderPlotly(daily_plot(league_stats(league_data, params)))
+        output$cumulative_plot <- renderPlotly(daily_plot(league_stats(league_data, params), params))
 
     }
 
