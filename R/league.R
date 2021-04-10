@@ -66,8 +66,10 @@ league_points <- function(col, values, data) {
 
 bounty_targets <- function(data, week, params) {
 
+    week_num <- as.numeric(str_split(week, " ", simplify = TRUE)[2])
+
     data %<>%
-        filter(report_week < week)
+        filter(report_week < week_num)
 
     standings <- league_standings(data, params)
 
@@ -77,7 +79,11 @@ bounty_targets <- function(data, week, params) {
         standings <- standings[0, ]
 
     # return however many player names are above the bounty threshold as a table for display
-    standings %>%
-        select(`Bounty Targets` = Player)
+    targets <-
+        standings %>%
+        select(`Bounty Target` = Player,
+               `League Points at Week Start` = `League Points`)
+
+    targets[1:params$bounty_threshold, ]
 
 }
