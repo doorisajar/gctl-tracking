@@ -7,6 +7,7 @@ library(purrr)
 library(lubridate)
 library(magrittr)
 library(janitor)
+library(stringr)
 
 params_path <- "gctl_config.json"
 
