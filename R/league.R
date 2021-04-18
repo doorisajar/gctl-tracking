@@ -68,6 +68,11 @@ bounty_targets <- function(data, week, params) {
 
     week_num <- as.numeric(str_split(week, " ", simplify = TRUE)[2])
 
+    # not a fan of early return, but it isn't terrible here
+    if (week_num == 1)
+        return(tibble(`Bounty Target` = "None yet!",
+                      `League Points at Week Start` = "0"))
+
     data %<>%
         filter(report_week < week_num)
 
