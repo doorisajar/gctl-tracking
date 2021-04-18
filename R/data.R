@@ -41,6 +41,9 @@ load_league_data <- function(params) {
 
     names(lg) <- params$report_cols
 
+    # TODO some people enter MM/YY/DD instead of MM/YY/DDDD. could do a check for years like "21"
+    # and bring them up to YYYY by adding time, if it happens regularly.
+
     lg %<>%
         mutate(
             pairing_wins = substr(pairing_wins, 1, 1) %>% as.integer,
