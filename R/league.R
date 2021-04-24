@@ -17,20 +17,19 @@ league_standings <- function(data, params) {
 }
 
 
+# compute "weeks elapsed since league start + 1"
 league_week <- function(report_date, league_start) {
 
-    if (is_empty(report_date)) {
-
-        week <- 0
-
-    } else{
-
-        week <-
+    # this could be done much more simply with a factor and breaks
+    week <-
+        ifelse(
+            report_date == league_start,
+            1,
             ((report_date - league_start) / dweeks(1)) %>%
-            floor()
-    }
+                ceiling()
+        )
 
-    week + 1
+    week
 
 }
 
@@ -38,31 +37,68 @@ league_week <- function(report_date, league_start) {
 league_stats <- function(data, params) {
 
     point_cols <- keep(params$report_cols, ~ .x %in% names(params$report_points))
-    names(point_cols) <- point_cols
+    names(point_cols) <- paste0(point_cols, "_points")
 
-    points <-
-        data %>%
+    points <- map_dfc(point_cols, report_points, data, params$report_points)
+
+    points <- bind_cols(data, points)
+
+    capped_points <-
+        points %>%
         group_by(id, report_week) %>%
-        map2_dfc(point_cols, params$report_points, league_points, data = .)
+        summarize(across(matches("_points"), threshold_points, params$report_points))
 
-    data$points <- rowSums(points, na.rm = TRUE)
+    total_points <-
+        capped_points %>%
+        ungroup %>%
+        select(matches("_points")) %>%
+        rowSums()
+
+    # ensure the rows align before essentially column binding the point totals
+    data %<>%
+        arrange(id, report_week) %>%
+        mutate(points = total_points)
 
     data
 
 }
 
 
-league_points <- function(col, values, data) {
+# compute the point value of an individual element of an individual report, without other knowledge
+report_points <- function(category, data, point_values) {
 
-    val <- data[[col]]
+    counts <- data[[category]]
 
-    val <- pmax(val, values[[2]], na.rm = TRUE)
+    values <- point_values[[category]]
 
-    val <- pmin(val, values[[3]], na.rm = TRUE)
+    counts <- pmax(counts, values$min, na.rm = TRUE)
 
-    point_val <- val * values[[1]]
+    counts <- pmin(counts, values$max, na.rm = TRUE)
 
-    point_val
+    points <- counts * values$points
+
+    points
+
+}
+
+
+# for a given player & week, their points are the pmin of their individual report points and the
+# weekly league thresholds for each category.
+threshold_points <- function(player_points, point_limits) {
+
+    limits <- point_limits[[str_remove(cur_column(), "_points")]]
+
+    player_points[is.na(player_points)] <- 0
+
+    cap <- limits$points * limits$max
+
+    hit_cap <- cumsum(player_points) > cap
+
+    capped_points <- ifelse(hit_cap, 0, player_points)
+
+    capped_points[which(hit_cap)[1]] <- cap - player_points[which(hit_cap)[1]]
+
+    capped_points
 
 }
 
@@ -94,6 +130,6 @@ bounty_targets <- function(data, week, params) {
         select(`Bounty Target` = Player,
                `League Points at Week Start` = `League Points`)
 
-    targets[1:params$bounty_threshold, ]
+    targets
 
 }
