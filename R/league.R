@@ -40,11 +40,8 @@ league_stats <- function(data, params) {
     point_cols <- keep(params$report_cols, ~ .x %in% names(params$report_points))
     names(point_cols) <- point_cols
 
-    # this applies `...1` style column names, but it doesn't really matter
     points <-
         data %>%
-        mutate(league_week = league_week(report_date, ymd_hms(params$league_start))) %>%
-        group_by(league_week) %>%
         map2_dfc(point_cols, params$report_points, league_points, data = .)
 
     data$points <- rowSums(points, na.rm = TRUE)
