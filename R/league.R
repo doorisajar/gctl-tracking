@@ -71,17 +71,19 @@ bounty_targets <- function(data, week, params) {
     # not a fan of early return, but it isn't terrible here
     if (week_num == 1)
         return(tibble(`Bounty Target` = "None yet!",
-                      `League Points at Week Start` = "0"))
+                      `League Points at Week Start` = "NA"))
 
     data %<>%
         filter(report_week < week_num)
 
     standings <- league_standings(data, params)
 
-    if (!is.null(params$bounty_threshold) & is.numeric(params$bounty_threshold))
-        standings <- standings[1:params$bounty_threshold, ]
-    else
+    if (!is.null(params$bounty_threshold) & is.numeric(params$bounty_threshold)) {
+        bounty_cutoff <- standings[params$bounty_threshold, ]$`League Points`
+        standings <- filter(standings, `League Points` >= bounty_cutoff)
+    } else {
         standings <- standings[0, ]
+    }
 
     # return however many player names are above the bounty threshold as a table for display
     targets <-
