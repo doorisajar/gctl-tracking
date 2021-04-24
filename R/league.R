@@ -42,6 +42,7 @@ league_stats <- function(data, params) {
 
     points <-
         data %>%
+        group_by(id, report_week) %>%
         map2_dfc(point_cols, params$report_points, league_points, data = .)
 
     data$points <- rowSums(points, na.rm = TRUE)
