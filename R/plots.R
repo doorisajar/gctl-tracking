@@ -2,7 +2,7 @@ library(ggplot2)
 library(ggdark)
 library(plotly)
 
-# This function expects to receive the output of league_stats
+# This function expects to receive a DataFrame of only $scores entries from the league list.
 daily_plot <- function(data, params) {
 
     data %<>%

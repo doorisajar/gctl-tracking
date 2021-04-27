@@ -81,10 +81,13 @@ server <- function(input, output) {
 
     league_data <- load_league_data(params)
 
+    league <- league_tracker(league_data, params)
+
     if (nrow(league_data) == 0) {
 
         # Cumulative league standings
-        output$league_table <- renderTable(league_standings(league_data, params))
+        output$league_table <- renderTable(tibble(Player = "None yet!",
+                                                  `League Points` = "NA"))
 
         # Pairings for a user-selected week (default latest week)
         output$pairings <- renderTable(league_pairings(input$selected_pairings))
@@ -92,15 +95,15 @@ server <- function(input, output) {
     } else {
 
         # Cumulative league standings
-        output$league_table <- renderTable(league_standings(league_data, params))
+        output$league_table <- renderTable(league_standings(league))
 
         # Pairings for a user-selected week (default latest week)
         output$pairings <- renderTable(league_pairings(input$selected_pairings))
 
-        output$bounty_targets <- renderTable(bounty_targets(league_data, input$selected_pairings, params))
+        output$bounty_targets <- renderTable(league[[input$selected_pairings]]$targets)
 
         # Timeseries plot of cumulative points for each player
-        output$cumulative_plot <- renderPlotly(daily_plot(league_stats(league_data, params), params))
+        output$cumulative_plot <- renderPlotly(daily_plot(map_dfr(league, ~ .x$scores), params))
 
     }
 

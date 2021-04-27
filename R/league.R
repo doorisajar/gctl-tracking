@@ -1,8 +1,58 @@
-league_standings <- function(data, params) {
+# compute the cumulative league standings, accounting for weekly points caps. store each week's
+# information (reports with associated points, and bounty targets) in a list.
+league_tracker <- function(data, params) {
+
+    data$league_week <- league_week(data$report_date, ymd_hms(params$league_start))
+
+    weeks <- unique(data$league_week)
+
+    weekly_stats <- list()
+
+    # track bounty targets week to week to ensure bounty targets don't claim bounty win points.
+    for (week in weeks) {
+
+        week_data <- filter(data, league_week == week)
+
+        if (week == 1) {
+
+            targets <- tibble(`Bounty Target` = "None yet!",
+                              `League Points at Week Start` = "NA")
+
+        } else if (week > 1) {
+
+            targets <- bounty_targets(weekly_stats[[paste("Week", week - 1)]]$scores, paste("Week", week - 1), params)
+
+            week_data %<>%
+                mutate(open_play_wins = ifelse(id %in% targets, 0, open_play_wins))
+
+        } else {
+
+            stop("League weeks can only be positive integers.")
+
+        }
+
+        weekly_stats[[paste("Week", week)]] <- list(scores = league_points(week_data, params), targets = targets)
+
+    }
+
+    weekly_stats
+
+}
+
+
+league_standings <- function(league) {
+
+    points <- map_dfr(league, ~ .x$scores)
+
+    league_point_totals(points)
+
+}
+
+
+league_point_totals <- function(data) {
 
     points <-
         data %>%
-        league_stats(params) %>%
         ungroup() %>%
         group_by(id) %>%
         summarize(points = sum(points, na.rm = TRUE) %>% as.integer) %>%
@@ -34,7 +84,7 @@ league_week <- function(report_date, league_start) {
 }
 
 
-league_stats <- function(data, params) {
+league_points <- function(data, params) {
 
     point_cols <- keep(params$report_cols, ~ .x %in% names(params$report_points))
     names(point_cols) <- paste0(point_cols, "_points")
@@ -96,6 +146,7 @@ threshold_points <- function(player_points, point_limits) {
 
     capped_points <- ifelse(hit_cap, 0, player_points)
 
+    # the first report where a player hits a cap may still get partial points
     capped_points[which(hit_cap)[1]] <- cap - player_points[which(hit_cap)[1]]
 
     capped_points
@@ -105,23 +156,17 @@ threshold_points <- function(player_points, point_limits) {
 
 bounty_targets <- function(data, week, params) {
 
-    week_num <- as.numeric(str_split(week, " ", simplify = TRUE)[2])
-
-    # not a fan of early return, but it isn't terrible here
-    if (week_num == 1)
-        return(tibble(`Bounty Target` = "None yet!",
-                      `League Points at Week Start` = "NA"))
-
-    data %<>%
-        filter(report_week < week_num)
-
-    standings <- league_standings(data, params)
+    standings <- league_point_totals(data)
 
     if (!is.null(params$bounty_threshold) & is.numeric(params$bounty_threshold)) {
+
         bounty_cutoff <- standings[params$bounty_threshold, ]$`League Points`
         standings <- filter(standings, `League Points` >= bounty_cutoff)
+
     } else {
+
         standings <- standings[0, ]
+
     }
 
     # return however many player names are above the bounty threshold as a table for display
