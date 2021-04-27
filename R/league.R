@@ -18,12 +18,19 @@ league_tracker <- function(data, params) {
             targets <- tibble(`Bounty Target` = "None yet!",
                               `League Points at Week Start` = "NA")
 
+            # no bounty wins allowed in week 1, since there are no bounty targets
+            week_data %<>%
+                mutate(bounty_wins = 0)
+
         } else if (week > 1) {
 
             targets <- bounty_targets(weekly_stats[[paste("Week", week - 1)]]$scores, paste("Week", week - 1), params)
 
+            # the reporting player can't get bounty wins if they're a bounty target, and one of
+            # their opponents must have been a bounty target.
             week_data %<>%
-                mutate(open_play_wins = ifelse(id %in% targets, 0, open_play_wins))
+                mutate(bounty_wins = ifelse(id %in% targets$`Bounty Target`, 0, bounty_wins)) %>%
+                mutate(bounty_wins = ifelse(opponents %in% targets$`Bounty Target`, bounty_wins, 0))
 
         } else {
 
