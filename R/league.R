@@ -4,7 +4,9 @@ league_tracker <- function(data, params) {
 
     data$league_week <- league_week(data$report_date, ymd_hms(params$league_start))
 
-    weeks <- unique(data$league_week)
+    report_weeks <- unique(data$league_week)
+
+    weeks <- min(report_weeks):(max(report_weeks) + 1)
 
     weekly_stats <- list()
 
@@ -24,7 +26,9 @@ league_tracker <- function(data, params) {
 
         } else if (week > 1) {
 
-            targets <- bounty_targets(weekly_stats[[paste("Week", week - 1)]]$scores, paste("Week", week - 1), params)
+            standings <- league_standings(weekly_stats)
+
+            targets <- bounty_targets(standings, params)
 
             # the reporting player can't get bounty wins if they're a bounty target, and one of
             # their opponents must have been a bounty target.
@@ -161,9 +165,8 @@ threshold_points <- function(player_points, point_limits) {
 }
 
 
-bounty_targets <- function(data, week, params) {
-
-    standings <- league_point_totals(data)
+# get standings up to the start of the chosen week, and identify bounty targets.
+bounty_targets <- function(standings, params) {
 
     if (!is.null(params$bounty_threshold) & is.numeric(params$bounty_threshold)) {
 
